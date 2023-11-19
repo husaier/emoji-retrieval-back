@@ -1,0 +1,40 @@
+server:
+  port: 8000 #端口号
+
+logging:
+  level:
+    com.hse.emoticon: debug
+
+mybatis-plus:
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  type-handlers-package: com.hse.emoticon.handler
+
+spring:
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: local #默认为本地环境
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  datasource:
+    url: jdbc:mysql://10.112.67.227:3306/olympic?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    druid:
+      initial-size: 5 #连接池初始化大小
+      min-idle: 10 #最小空闲连接数
+      max-active: 20 #最大连接数
+      web-stat-filter:
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+      stat-view-servlet: #访问监控网页的登录用户名和密码
+        login-username: druid
+        login-password: druid
+  redis:
+    host: 127.0.0.1
+    port: 6379
