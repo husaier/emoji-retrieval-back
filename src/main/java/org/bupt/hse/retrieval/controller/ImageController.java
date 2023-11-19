@@ -4,16 +4,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.bupt.hse.retrieval.common.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Hu Saier <husaier@bupt.edu.cn>
@@ -21,7 +25,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("api/img")
-@Api(tags = "图片接口")
+@Api(tags = "图片管理接口")
 @Slf4j
 public class ImageController {
 
@@ -31,23 +35,30 @@ public class ImageController {
     @GetMapping(value = "download/{img}")
     @ApiOperation(value = "下载图片")
     public ResponseEntity<InputStreamResource> downloadImage(@PathVariable(name = "img")
-                                                             @ApiParam(value = "file_name", required = true) String img) throws IOException {
-
-        String suffixName = img.substring(img.lastIndexOf("."));
-        String path = String.format("%s/emoji/%s", classPath, img);
-        FileSystemResource resource = new FileSystemResource(path);
-        if (suffixName.equals(".jpg")) {
+                                                             @ApiParam(value = "file_name", required = true) String img) {
+        try {
+            String suffixName = img.substring(img.lastIndexOf("."));
+            String path = String.format("%s/emoji/%s", classPath, img);
+            FileSystemResource resource = new FileSystemResource(path);
+            if (suffixName.equals(".jpg")) {
+                return ResponseEntity
+                        .ok()
+                        .contentLength(resource.contentLength())
+                        .contentType(MediaType.parseMediaType("image/jpeg"))
+                        .body(new InputStreamResource(resource.getInputStream()));
+            } else {
+                return ResponseEntity
+                        .ok()
+                        .contentLength(resource.contentLength())
+                        .contentType(MediaType.parseMediaType("image/gif"))
+                        .body(new InputStreamResource(resource.getInputStream()));
+            }
+        } catch (IOException e) {
+            InputStream stream = new ByteArrayInputStream("图片读取错误".getBytes(StandardCharsets.UTF_8));
             return ResponseEntity
-                    .ok()
-                    .contentLength(resource.contentLength())
-                    .contentType(MediaType.parseMediaType("image/jpeg"))
-                    .body(new InputStreamResource(resource.getInputStream()));
-        } else {
-            return ResponseEntity
-                    .ok()
-                    .contentLength(resource.contentLength())
-                    .contentType(MediaType.parseMediaType("image/gif"))
-                    .body(new InputStreamResource(resource.getInputStream()));
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new InputStreamResource(stream));
         }
     }
 
