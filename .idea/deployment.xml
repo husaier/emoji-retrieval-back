@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="cad02-hse" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="cad02-hse">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/projects/emoji-retrieval-back-end" local="$PROJECT_DIR$/target" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

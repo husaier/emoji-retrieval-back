@@ -1,6 +1,7 @@
 package org.bupt.hse.retrieval.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.entity.UserDO;
 import org.bupt.hse.retrieval.params.LoginParam;
 import org.bupt.hse.retrieval.params.RegisterParam;
@@ -14,5 +15,5 @@ public interface UserService extends IService<UserDO> {
 
     UserVO login(LoginParam param);
 
-    UserVO register(RegisterParam param);
+    UserVO register(RegisterParam param) throws BizException;
 }

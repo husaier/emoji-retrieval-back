@@ -1,8 +1,6 @@
 package org.bupt.hse.retrieval.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,6 +11,7 @@ import java.io.Serializable;
  * @since 2023-11-19
  */
 @ApiModel(value = "User对象", description = "")
+@TableName("user")
 public class UserDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,6 +37,7 @@ public class UserDO implements Serializable {
 
     @ApiModelProperty("逻辑删除")
     @TableLogic(value = "0", delval = "1")
+    @TableField(value = "`delete`")
     private Byte delete;
 
     public Long getId() {

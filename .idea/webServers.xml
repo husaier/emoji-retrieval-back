@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f8ac9be2-773c-4963-91ea-48b9acc39a0e" name="cad02-hse">
+        <fileTransfer rootFolder="/home/hse" accessType="SFTP" host="10.112.67.227" port="17877" sshConfigId="90df49a8-e11e-487c-a2c0-cfd8058c245e" sshConfig="hse@10.112.67.227:17877 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

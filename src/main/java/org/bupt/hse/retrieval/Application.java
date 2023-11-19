@@ -7,7 +7,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 
 @SpringBootApplication
 @EnableOpenApi
-@MapperScan("org.bupt.hse")
+@MapperScan("org.bupt.hse.retrieval.mapper")
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

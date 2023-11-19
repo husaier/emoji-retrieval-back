@@ -1,5 +1,6 @@
 package org.bupt.hse.retrieval.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.bupt.hse.retrieval.entity.UserDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Hu Saier
  * @since 2023-11-19
  */
+@Mapper
 public interface UserMapper extends BaseMapper<UserDO> {
 
 }

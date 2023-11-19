@@ -3,6 +3,7 @@ package org.bupt.hse.retrieval.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
 import org.bupt.hse.retrieval.params.LoginParam;
 import org.bupt.hse.retrieval.params.RegisterParam;
@@ -40,10 +41,11 @@ public class UserController {
     @PostMapping(value = "register")
     @ApiOperation(value = "注册")
     public Result<UserVO> register(RegisterParam param) {
-        UserVO vo = userService.register(param);
-        if (vo == null) {
-            return Result.failed();
+        try {
+            UserVO vo = userService.register(param);
+            return Result.success(vo);
+        } catch (BizException e) {
+            return Result.failed(e.getMessage());
         }
-        return Result.success(vo);
     }
 }
