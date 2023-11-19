@@ -2,6 +2,7 @@ package org.bupt.hse.retrieval.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -36,6 +37,7 @@ public class UserDO implements Serializable {
     private String pwdEncrypt;
 
     @ApiModelProperty("逻辑删除")
+    @TableLogic(value = "0", delval = "1")
     private Byte delete;
 
     public Long getId() {
