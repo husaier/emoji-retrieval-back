@@ -2,7 +2,7 @@ package org.bupt.hse.retrieval.enums;
 
 /**
  * created by Hu Saier <husserl@bupt.edu.cn>
- * 2023-11-19
+ * 2023-10-19
  */
 public enum UserTypeEnums {
     NORMAL("normal", "普通用户"),

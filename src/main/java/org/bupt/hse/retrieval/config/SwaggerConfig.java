@@ -14,8 +14,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 /**
  * @author Hu Saier <husaier@bupt.edu.cn>
  * Created on 2022-03-20
- * swagger地址 http://localhost:8666/swagger-ui/index.html
- * swagger地址 http://10.112.67.227:8666/swagger-ui/index.html
+ * swagger地址 http://localhost:8000/swagger-ui/index.html
+ * swagger地址 http://10.112.67.227:8000/swagger-ui/index.html
  */
 @Configuration
 public class SwaggerConfig {

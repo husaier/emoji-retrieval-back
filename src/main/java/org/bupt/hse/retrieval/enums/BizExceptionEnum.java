@@ -2,7 +2,7 @@ package org.bupt.hse.retrieval.enums;
 
 /**
  * created by Hu Saier <husserl@bupt.edu.cn>
- * 2023-11-19
+ * 2023-10-19
  */
 public enum BizExceptionEnum {
     EMAIL_ALREADY_REGISTERED("email_already_registered", "该邮箱已经注册"),

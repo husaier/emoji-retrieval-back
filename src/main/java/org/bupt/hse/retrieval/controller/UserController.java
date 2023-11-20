@@ -2,6 +2,7 @@ package org.bupt.hse.retrieval.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * created by Saier Hu
  * email <husserl@bupt.edu.cn>
- * 2023-11-19
+ * 2023-10-19
  */
 @RestController
 @RequestMapping("api/user")
@@ -30,7 +31,7 @@ public class UserController {
 
     @PostMapping(value = "login")
     @ApiOperation(value = "登陆")
-    public Result<UserVO> login(LoginParam param) {
+    public Result<UserVO> login(@RequestBody LoginParam param) {
         UserVO vo = userService.login(param);
         if (vo == null) {
             return Result.failed();
@@ -40,7 +41,7 @@ public class UserController {
 
     @PostMapping(value = "register")
     @ApiOperation(value = "注册")
-    public Result<UserVO> register(RegisterParam param) {
+    public Result<UserVO> register(@RequestBody RegisterParam param) {
         try {
             UserVO vo = userService.register(param);
             return Result.success(vo);
