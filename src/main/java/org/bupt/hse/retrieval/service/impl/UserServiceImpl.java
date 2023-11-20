@@ -1,7 +1,9 @@
 package org.bupt.hse.retrieval.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.MD5Utils;
 import org.bupt.hse.retrieval.entity.UserDO;
@@ -19,9 +21,11 @@ import org.springframework.stereotype.Service;
  * 2023-10-19
  */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
     @Override
     public UserVO login(LoginParam param) {
+        log.info(JSON.toJSONString(param));
         UserDO userDO = this.getOne(new LambdaQueryWrapper<UserDO>().eq(UserDO::getEmail, param.getEmail()));
         String pwdEncrypt = userDO.getPwdEncrypt();
         String timestamp = userDO.getTimestamp();
