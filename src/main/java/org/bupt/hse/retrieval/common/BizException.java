@@ -20,4 +20,12 @@ public class BizException extends Exception {
         this.code = code;
         this.msg = msg;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
 }

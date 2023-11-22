@@ -16,4 +16,6 @@ public interface UserService extends IService<UserDO> {
     UserVO login(LoginParam param);
 
     UserVO register(RegisterParam param) throws BizException;
+
+    UserDO getUserDO();
 }

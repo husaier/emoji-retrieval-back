@@ -4,15 +4,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.bupt.hse.retrieval.common.BizException;
+import org.bupt.hse.retrieval.common.Result;
+import org.bupt.hse.retrieval.service.ImageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,18 +31,20 @@ import java.nio.charset.StandardCharsets;
 @Api(tags = "图片管理接口")
 @Slf4j
 public class ImageController {
+    @Value("${file.storage.class-path}")
+    private String classPath;
+    @Autowired
+    private ImageService imageService;
 
-
-    private String classPath = "/home/hse/projects/emoji-retrieval-back-end/tmp";
-
-    @GetMapping(value = "download/{img}")
+    @GetMapping(value = "download/{imgId}")
     @ApiOperation(value = "下载图片")
-    public ResponseEntity<InputStreamResource> downloadImage(@PathVariable(name = "img")
-                                                             @ApiParam(value = "file_name", required = true) String img) {
+    public ResponseEntity<InputStreamResource> downloadImage(@PathVariable(name = "imgId")
+                                                             @ApiParam(value = "file_name", required = true) Long imgId) {
         try {
-            String suffixName = img.substring(img.lastIndexOf("."));
-            String path = String.format("%s/emoji/%s", classPath, img);
-            FileSystemResource resource = new FileSystemResource(path);
+            FileSystemResource resource = imageService.downloadImage(imgId);
+            String name = resource.getFilename();
+            assert name != null;
+            String suffixName = name.substring(name.lastIndexOf("."));
             if (suffixName.equals(".jpg")) {
                 return ResponseEntity
                         .ok()
@@ -59,41 +64,24 @@ public class ImageController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new InputStreamResource(stream));
+        } catch (BizException e) {
+            InputStream stream = new ByteArrayInputStream(e.getMsg().getBytes(StandardCharsets.UTF_8));
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new InputStreamResource(stream));
         }
     }
 
-//    @PostMapping("upload/{tweetId}")
-//    @ApiOperation(value = "上传图片")
-//    public Result<String> uploadImage(@ApiParam(value = "上传的jpg文件", required = true)
-//                                      @RequestPart("file") MultipartFile file,
-//                                      @PathVariable(name = "tweetId")
-//                                      @ApiParam(value = "推特ID", required = true) Long tweetId) {
-//        if (file.isEmpty()) {
-//            return Result.failed("文件不能为空");
-//        }
-//        String originalName = file.getOriginalFilename();
-//        if (originalName == null || originalName.isEmpty()) {
-//            return Result.failed("文件名不能为空");
-//        }
-//        String suffixName = originalName.substring(originalName.lastIndexOf("."));
-//        ImageTypeEnum imageType = ImageTypeEnum.parseTypeBySuffix(suffixName);
-//        if (imageType == null) {
-//            return Result.failed("图片格式错误");
-//        }
-//        String imgName = UUID.randomUUID() + suffixName;
-//        if (!imageService.checkAndSaveImg(tweetId, originalName, imgName, imageType)) {
-//            return Result.failed("上传失败，数据库保存失败");
-//        }
-//        try {
-//            String path = String.format("%s/img/%d/%s", classPath, tweetId, imgName);
-//            File newFile = new File(path);
-//            FileUtils.touch(newFile);
-//            file.transferTo(newFile);
-//            log.info("{} 保存成功", path);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Result.failed("上传失败！");
-//        }
-//        return Result.success("上传成功！");
-//    }
+    @PostMapping("upload")
+    @ApiOperation(value = "上传图片")
+    public Result<String> uploadImage(@ApiParam(value = "上传的jpg文件", required = true)
+                                      @RequestPart("file") MultipartFile file) {
+        try {
+            Long imgId = imageService.uploadImage(file);
+            return Result.success(String.valueOf(imgId));
+        } catch (BizException e) {
+            return Result.failed(e.getMsg());
+        }
+    }
 }

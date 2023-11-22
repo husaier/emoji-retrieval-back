@@ -1,5 +1,7 @@
 package org.bupt.hse.retrieval.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -9,6 +11,7 @@ import lombok.Data;
 @Data
 public class UserVO {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
 
     private String name;
