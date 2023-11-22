@@ -17,7 +17,7 @@ public class UserDO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("id")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("用户类型，0为普通用户，1为管理员用户")

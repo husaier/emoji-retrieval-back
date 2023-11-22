@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
+import org.bupt.hse.retrieval.enums.BizExceptionEnum;
 import org.bupt.hse.retrieval.params.LoginParam;
 import org.bupt.hse.retrieval.params.RegisterParam;
 import org.bupt.hse.retrieval.service.UserService;
@@ -34,7 +35,7 @@ public class UserController {
     public Result<UserVO> login(@RequestBody LoginParam param) {
         UserVO vo = userService.login(param);
         if (vo == null) {
-            return Result.failed();
+            return Result.failed(BizExceptionEnum.WRONG_PASS_WORD.getMsg());
         }
         return Result.success(vo);
     }
@@ -46,7 +47,7 @@ public class UserController {
             UserVO vo = userService.register(param);
             return Result.success(vo);
         } catch (BizException e) {
-            return Result.failed(e.getMessage());
+            return Result.failed(e.getMsg());
         }
     }
 }
