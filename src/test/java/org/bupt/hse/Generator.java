@@ -34,7 +34,7 @@ public class Generator {
                             .pathInfo(Collections.singletonMap(OutputFile.xml, projectPath + "/src/main/resources")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("user")
+                    builder.addInclude("image")
                             .entityBuilder()
                             .naming(NamingStrategy.underline_to_camel);
                 })
