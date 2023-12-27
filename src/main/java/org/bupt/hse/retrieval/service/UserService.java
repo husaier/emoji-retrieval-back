@@ -13,9 +13,24 @@ import org.bupt.hse.retrieval.vo.UserVO;
  */
 public interface UserService extends IService<UserDO> {
 
+    /**
+     * 用户登录
+     * @param param
+     * @return
+     */
     UserVO login(LoginParam param);
 
+    /**
+     * 用户注册
+     * @param param
+     * @return
+     * @throws BizException
+     */
     UserVO register(RegisterParam param) throws BizException;
 
+    /**
+     * 获取当前登录用户信息
+     * @return
+     */
     UserDO getUserDO();
 }

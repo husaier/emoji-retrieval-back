@@ -32,7 +32,8 @@ public class UserController {
 
     @PostMapping(value = "login")
     @ApiOperation(value = "登陆")
-    public Result<UserVO> login(@RequestBody LoginParam param) {
+    public Result<UserVO> login(@RequestBody
+                                LoginParam param) {
         UserVO vo = userService.login(param);
         if (vo == null) {
             return Result.failed(BizExceptionEnum.WRONG_PASS_WORD.getMsg());
@@ -42,7 +43,8 @@ public class UserController {
 
     @PostMapping(value = "register")
     @ApiOperation(value = "注册")
-    public Result<UserVO> register(@RequestBody RegisterParam param) {
+    public Result<UserVO> register(@RequestBody
+                                   RegisterParam param) {
         try {
             UserVO vo = userService.register(param);
             return Result.success(vo);
