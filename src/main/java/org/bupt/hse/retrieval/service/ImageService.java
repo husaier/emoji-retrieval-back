@@ -16,6 +16,26 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface ImageService extends IService<ImageDO> {
 
+    /**
+     * 下载图片
+     * @param imgId
+     * @return
+     * @throws BizException
+     */
     FileSystemResource downloadImage(Long imgId) throws BizException;
+
+    /**
+     * 上传图片
+     * @param file
+     * @return
+     * @throws BizException
+     */
     Long uploadImage(MultipartFile file) throws BizException;
+
+    /**
+     * 逻辑删除文件
+     * @param imgId
+     * @throws BizException
+     */
+    void deleteImage(Long imgId) throws BizException;
 }

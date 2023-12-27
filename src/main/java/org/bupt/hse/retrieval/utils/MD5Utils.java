@@ -1,4 +1,4 @@
-package org.bupt.hse.retrieval.common;
+package org.bupt.hse.retrieval.utils;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

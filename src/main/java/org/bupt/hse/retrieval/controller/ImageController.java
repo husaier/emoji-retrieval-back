@@ -39,7 +39,7 @@ public class ImageController {
     @GetMapping(value = "download/{imgId}")
     @ApiOperation(value = "下载图片")
     public ResponseEntity<InputStreamResource> downloadImage(@PathVariable(name = "imgId")
-                                                             @ApiParam(value = "file_name", required = true) Long imgId) {
+                                                             @ApiParam(value = "image id", required = true) Long imgId) {
         try {
             FileSystemResource resource = imageService.downloadImage(imgId);
             String name = resource.getFilename();
@@ -80,6 +80,18 @@ public class ImageController {
         try {
             Long imgId = imageService.uploadImage(file);
             return Result.success(String.valueOf(imgId));
+        } catch (BizException e) {
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @DeleteMapping("delete/{imgId}")
+    @ApiOperation(value = "删除图片")
+    public Result<String> deleteImage(@PathVariable(name = "imgId")
+                                    @ApiParam(value = "image id", required = true) Long imgId) {
+        try {
+            imageService.deleteImage(imgId);
+            return Result.success("删除成功！");
         } catch (BizException e) {
             return Result.failed(e.getMsg());
         }

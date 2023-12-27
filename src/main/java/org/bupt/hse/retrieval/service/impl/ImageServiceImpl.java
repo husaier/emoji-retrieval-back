@@ -79,4 +79,20 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implemen
         }
         return imageDO.getId();
     }
+
+    @Override
+    public void deleteImage(Long imgId) throws BizException {
+        UserDO userDO = userService.getUserDO();
+        ImageDO imageDO = getById(imgId);
+        if (imageDO == null) {
+            throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
+        }
+//        String fileName = imageDO.getFileName();
+//        String path = String.format("%s/emoji/%s", classPath, fileName);
+//        boolean res = MyFileUtils.deleteFile(path);
+//        if (!res) {
+//            throw new BizException(BizExceptionEnum.FILE_DELETE_FAIL);
+//        }
+        userService.removeById(userDO.getId());
+    }
 }

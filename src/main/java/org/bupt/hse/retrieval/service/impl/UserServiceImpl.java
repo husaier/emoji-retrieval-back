@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Constants;
-import org.bupt.hse.retrieval.common.MD5Utils;
+import org.bupt.hse.retrieval.utils.MD5Utils;
 import org.bupt.hse.retrieval.entity.UserDO;
 import org.bupt.hse.retrieval.enums.BizExceptionEnum;
 import org.bupt.hse.retrieval.enums.UserTypeEnums;
