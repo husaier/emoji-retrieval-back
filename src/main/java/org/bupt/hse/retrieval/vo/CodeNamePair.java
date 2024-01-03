@@ -2,13 +2,11 @@ package org.bupt.hse.retrieval.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author Hu Saier <husaier@bupt.edu.cn>
  * Created on 2022-04-22
  */
-@Data
 @ApiModel("情感类别")
 public class CodeNamePair {
 
@@ -20,6 +18,22 @@ public class CodeNamePair {
 
     public CodeNamePair(String code, String name) {
         this.code = code;
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 }

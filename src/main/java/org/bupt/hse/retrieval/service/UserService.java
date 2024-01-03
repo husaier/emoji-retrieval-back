@@ -7,6 +7,8 @@ import org.bupt.hse.retrieval.params.LoginParam;
 import org.bupt.hse.retrieval.params.RegisterParam;
 import org.bupt.hse.retrieval.vo.UserVO;
 
+import java.util.List;
+
 /**
  * created by Hu Saier <husserl@bupt.edu.cn>
  * 2023-10-19
@@ -33,4 +35,6 @@ public interface UserService extends IService<UserDO> {
      * @return
      */
     UserDO getUserDO();
+
+    List<UserDO> getUserInfo();
 }

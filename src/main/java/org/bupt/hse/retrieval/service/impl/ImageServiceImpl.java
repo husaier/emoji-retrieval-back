@@ -1,7 +1,6 @@
 package org.bupt.hse.retrieval.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.entity.ImageDO;
@@ -11,6 +10,8 @@ import org.bupt.hse.retrieval.enums.ImageTypeEnum;
 import org.bupt.hse.retrieval.mapper.ImageMapper;
 import org.bupt.hse.retrieval.service.ImageService;
 import org.bupt.hse.retrieval.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -29,10 +30,13 @@ import java.time.LocalDateTime;
  * @since 2023-11-22
  */
 @Service
-@Slf4j
 public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implements ImageService {
+
+    private final static Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
+
     @Value("${file.storage.class-path}")
     private String classPath;
+
     @Autowired
     private UserService userService;
 

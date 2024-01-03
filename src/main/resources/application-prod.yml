@@ -1,5 +1,5 @@
 file:
   download:
-    address: http://10.112.67.227:${server.port}/img/download
+    address: http://10.112.67.227:${server.port}/api/img/download
   storage:
     class-path: /home/hse/projects/emoji-retrieval-back-end/tmp

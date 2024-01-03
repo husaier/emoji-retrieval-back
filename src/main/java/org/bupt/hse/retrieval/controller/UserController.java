@@ -2,7 +2,6 @@ package org.bupt.hse.retrieval.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
 import org.bupt.hse.retrieval.enums.BizExceptionEnum;
@@ -10,6 +9,8 @@ import org.bupt.hse.retrieval.params.LoginParam;
 import org.bupt.hse.retrieval.params.RegisterParam;
 import org.bupt.hse.retrieval.service.UserService;
 import org.bupt.hse.retrieval.vo.UserVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/user")
 @Api(tags = "用户管理接口")
-@Slf4j
 public class UserController {
+
+    private final static Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;

@@ -1,5 +1,5 @@
 file:
   download:
-    address: http://localhost:${server.port}/img/download
+    address: http://localhost:${server.port}/api/img/download
   storage:
     class-path: D:\研究生\毕业设计\project\emoji-retrieval-springboot\tmp

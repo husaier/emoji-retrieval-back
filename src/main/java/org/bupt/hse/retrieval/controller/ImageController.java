@@ -3,10 +3,11 @@ package org.bupt.hse.retrieval.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
 import org.bupt.hse.retrieval.service.ImageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -29,10 +30,13 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("api/img")
 @Api(tags = "图片管理接口")
-@Slf4j
 public class ImageController {
+
+    private final static Logger log = LoggerFactory.getLogger(ImageController.class);
+
     @Value("${file.storage.class-path}")
     private String classPath;
+
     @Autowired
     private ImageService imageService;
 
