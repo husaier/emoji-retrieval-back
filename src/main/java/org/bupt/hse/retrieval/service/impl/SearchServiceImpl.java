@@ -1,5 +1,6 @@
 package org.bupt.hse.retrieval.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.entity.ImageDO;
@@ -61,11 +62,11 @@ public class SearchServiceImpl implements SearchService {
         List<ImageVO> imgList = page.getRecords().stream()
                 .map((x) -> {
                    ImageVO vo = new ImageVO();
-                   vo.setId(x.getId());
+                   vo.setId(String.valueOf(x.getId()));
                    vo.setFileName(x.getFileName());
                    vo.setOriginName(x.getOriginName());
                    vo.setImgType(x.getImgType());
-                   vo.setUserId(x.getUserId());
+                   vo.setUserId(String.valueOf(x.getUserId()));
                    vo.setLike(likeSet.contains(x.getId()));
                    UserDO userDO = userMap.get(x.getUserId());
                    if (userDO != null) {
@@ -76,6 +77,49 @@ public class SearchServiceImpl implements SearchService {
                    vo.setAddress(address);
                    vo.setDescription("图片描述");
                    return vo;
+                }).collect(Collectors.toList());
+        pageVO.setRecords(imgList);
+        return pageVO;
+    }
+
+    @Override
+    public PageVO<ImageVO> getLikePage(long cur, long pageSize) throws BizException {
+        UserDO curUser = userService.getCurUserInfo();
+        Long userId = curUser.getId();
+        List<UserDO> userList = userService.getUserInfo();
+        Set<Long> likeSet = userService.getLikeSet(userId);
+        Map<Long, UserDO> userMap = userList.stream()
+                .collect(Collectors
+                        .toMap(UserDO::getId,
+                                Function.identity(),
+                                (x, y) -> x));
+        Page<ImageDO> tmpPage = new Page<>(cur, pageSize);
+        LambdaQueryWrapper<ImageDO> pageQuery = new LambdaQueryWrapper<ImageDO>()
+                .in(ImageDO::getId, likeSet);
+        Page<ImageDO> page = imageInfraService.page(tmpPage, pageQuery);
+        PageVO<ImageVO> pageVO = new PageVO<>();
+        pageVO.setCur(page.getCurrent());
+        pageVO.setPageSize(page.getSize());
+        pageVO.setPageNum(page.getPages());
+        pageVO.setTotal(page.getTotal());
+        List<ImageVO> imgList = page.getRecords().stream()
+                .map((x) -> {
+                    ImageVO vo = new ImageVO();
+                    vo.setId(String.valueOf(x.getId()));
+                    vo.setFileName(x.getFileName());
+                    vo.setOriginName(x.getOriginName());
+                    vo.setImgType(x.getImgType());
+                    vo.setUserId(String.valueOf(x.getUserId()));
+                    vo.setLike(likeSet.contains(x.getId()));
+                    UserDO userDO = userMap.get(x.getUserId());
+                    if (userDO != null) {
+                        vo.setUserName(userDO.getName());
+                    }
+                    vo.setUploadTime(x.getUploadTime());
+                    String address = String.format("%s/%s", downloadAddress, x.getId());
+                    vo.setAddress(address);
+                    vo.setDescription("图片描述");
+                    return vo;
                 }).collect(Collectors.toList());
         pageVO.setRecords(imgList);
         return pageVO;

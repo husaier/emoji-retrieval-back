@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class ImageVO {
 
     @ApiModelProperty("id")
-    long id;
+    private String id;
 
     @ApiModelProperty("生成文件名")
     private String fileName;
@@ -28,7 +28,7 @@ public class ImageVO {
     private String imgType;
 
     @ApiModelProperty("上传用户id")
-    private Long userId;
+    private String userId;
 
     @ApiModelProperty("上传用户昵称")
     private String userName;
@@ -42,11 +42,11 @@ public class ImageVO {
     @ApiModelProperty("是否收藏")
     private boolean like;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -82,11 +82,11 @@ public class ImageVO {
         this.imgType = imgType;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

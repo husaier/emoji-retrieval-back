@@ -39,7 +39,7 @@ spring:
     host: 10.112.67.227
     port: 6379
     database: 0
-    password: 123456
+    password: husaier
     lettuce:
       pool:
         max-idle: 16

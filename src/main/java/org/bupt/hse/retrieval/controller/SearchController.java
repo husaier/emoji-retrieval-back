@@ -44,4 +44,19 @@ public class SearchController {
             return Result.failed(e.getMsg());
         }
     }
+
+    @GetMapping(value = "like/page")
+    @ApiOperation(value = "分页获取当前用户的收藏图片")
+    public Result<PageVO<ImageVO>> getLikePage(@RequestParam("pageSize")
+                                               @ApiParam("page size")
+                                               long pageSize,
+                                               @RequestParam("cur")
+                                               @ApiParam("当前页数")
+                                               long cur) {
+        try {
+            return Result.success(searchService.getLikePage(cur, pageSize));
+        } catch (BizException e) {
+            return Result.failed(e.getMsg());
+        }
+    }
 }
