@@ -1,15 +1,16 @@
 package org.bupt.hse.retrieval.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.entity.ImageDO;
 import org.bupt.hse.retrieval.entity.UserDO;
 import org.bupt.hse.retrieval.enums.BizExceptionEnum;
 import org.bupt.hse.retrieval.enums.ImageTypeEnum;
-import org.bupt.hse.retrieval.mapper.ImageMapper;
+import org.bupt.hse.retrieval.infra.ImageInfraService;
 import org.bupt.hse.retrieval.service.ImageService;
 import org.bupt.hse.retrieval.service.UserService;
+import org.bupt.hse.retrieval.utils.MyFileUtils;
+import org.bupt.hse.retrieval.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import java.time.LocalDateTime;
  * @since 2023-11-22
  */
 @Service
-public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implements ImageService {
+public class ImageServiceImpl implements ImageService {
 
     private final static Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
 
@@ -40,9 +41,15 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implemen
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private ImageInfraService imageInfraService;
+
     @Override
     public FileSystemResource downloadImage(Long imgId) throws BizException {
-        ImageDO imageDO = getById(imgId);
+        ImageDO imageDO = imageInfraService.getById(imgId);
         if (imageDO == null) {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
@@ -53,7 +60,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implemen
 
     @Override
     public Long uploadImage(MultipartFile file) throws BizException {
-        UserDO userDO = userService.getUserDO();
+        UserDO userDO = userService.getCurUserInfo();
         if (file.isEmpty()) {
             throw new BizException(BizExceptionEnum.EMPTY_FILE);
         }
@@ -69,7 +76,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implemen
         imageDO.setImgType(imageType.getCode());
         imageDO.setUploadTime(LocalDateTime.now());
         imageDO.setUserId(userDO.getId());
-        save(imageDO);
+        imageInfraService.save(imageDO);
         String imgName = String.format("%d%s", imageDO.getId(), suffixName);
         try {
             String path = String.format("%s/emoji/%s", classPath, imgName);
@@ -77,7 +84,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implemen
             FileUtils.touch(newFile);
             file.transferTo(newFile);
             imageDO.setFileName(imgName);
-            saveOrUpdate(imageDO);
+            imageInfraService.saveOrUpdate(imageDO);
         } catch (Exception e) {
             throw new BizException(BizExceptionEnum.FILE_UPLOAD_FAIL);
         }
@@ -86,17 +93,50 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageDO> implemen
 
     @Override
     public void deleteImage(Long imgId) throws BizException {
-        UserDO userDO = userService.getUserDO();
-        ImageDO imageDO = getById(imgId);
+        UserDO userDO = userService.getCurUserInfo();
+        ImageDO imageDO = imageInfraService.getById(imgId);
         if (imageDO == null) {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
-//        String fileName = imageDO.getFileName();
-//        String path = String.format("%s/emoji/%s", classPath, fileName);
-//        boolean res = MyFileUtils.deleteFile(path);
-//        if (!res) {
-//            throw new BizException(BizExceptionEnum.FILE_DELETE_FAIL);
-//        }
-        userService.removeById(userDO.getId());
+        imageInfraService.removeById(imgId);
+    }
+
+    @Override
+    public void hardDeleteImage(Long imgId) throws BizException {
+        UserDO userDO = userService.getCurUserInfo();
+        ImageDO imageDO = imageInfraService.getById(imgId);
+        if (imageDO == null) {
+            throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
+        }
+        String fileName = imageDO.getFileName();
+        String path = String.format("%s/emoji/%s", classPath, fileName);
+        boolean res = MyFileUtils.deleteFile(path);
+        if (!res) {
+            throw new BizException(BizExceptionEnum.FILE_DELETE_FAIL);
+        }
+        imageInfraService.hardDeleteImage(imgId);
+    }
+
+
+    @Override
+    public void likeImage(Long imgId) throws BizException {
+        ImageDO imageDO = imageInfraService.getById(imgId);
+        if (imageDO == null) {
+            throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
+        }
+        UserDO userDO = userService.getCurUserInfo();
+        Long id = userDO.getId();
+        redisUtil.sSet(String.valueOf(id), String.valueOf(imgId));
+    }
+
+    @Override
+    public void unlikeImage(Long imgId) throws BizException {
+        ImageDO imageDO = imageInfraService.getById(imgId);
+        if (imageDO == null) {
+            throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
+        }
+        UserDO userDO = userService.getCurUserInfo();
+        Long id = userDO.getId();
+        redisUtil.remove(String.valueOf(id), String.valueOf(imgId));
     }
 }

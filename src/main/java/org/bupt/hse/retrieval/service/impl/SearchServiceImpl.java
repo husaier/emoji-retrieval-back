@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.entity.ImageDO;
 import org.bupt.hse.retrieval.entity.UserDO;
-import org.bupt.hse.retrieval.service.ImageService;
+import org.bupt.hse.retrieval.infra.ImageInfraService;
 import org.bupt.hse.retrieval.service.SearchService;
 import org.bupt.hse.retrieval.service.UserService;
 import org.bupt.hse.retrieval.vo.ImageVO;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class SearchServiceImpl implements SearchService {
     private String downloadAddress;
 
     @Autowired
-    private ImageService imageService;
+    private ImageInfraService imageInfraService;
 
     @Autowired
     private UserService userService;
@@ -41,14 +42,17 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public PageVO<ImageVO> searchImages(long cur, long pageSize)
             throws BizException {
+        UserDO curUser = userService.getCurUserInfo();
+        Long userId = curUser.getId();
         List<UserDO> userList = userService.getUserInfo();
+        Set<Long> likeSet = userService.getLikeSet(userId);
         Map<Long, UserDO> userMap = userList.stream()
                 .collect(Collectors
                         .toMap(UserDO::getId,
                                 Function.identity(),
                                 (x, y) -> x));
         Page<ImageDO> tmpPage = new Page<>(cur, pageSize);
-        Page<ImageDO> page = imageService.page(tmpPage);
+        Page<ImageDO> page = imageInfraService.page(tmpPage);
         PageVO<ImageVO> pageVO = new PageVO<>();
         pageVO.setCur(page.getCurrent());
         pageVO.setPageSize(page.getSize());
@@ -62,6 +66,7 @@ public class SearchServiceImpl implements SearchService {
                    vo.setOriginName(x.getOriginName());
                    vo.setImgType(x.getImgType());
                    vo.setUserId(x.getUserId());
+                   vo.setLike(likeSet.contains(x.getId()));
                    UserDO userDO = userMap.get(x.getUserId());
                    if (userDO != null) {
                        vo.setUserName(userDO.getName());

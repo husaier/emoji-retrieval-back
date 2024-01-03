@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2023-11-22
  */
 public interface ImageMapper extends BaseMapper<ImageDO> {
-
+    void hardDeleteImage(Long imgId);
 }

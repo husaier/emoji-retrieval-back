@@ -12,10 +12,9 @@ import org.bupt.hse.retrieval.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * created by Saier Hu
@@ -50,6 +49,17 @@ public class UserController {
         try {
             UserVO vo = userService.register(param);
             return Result.success(vo);
+        } catch (BizException e) {
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @GetMapping(value = "likeList")
+    @ApiOperation(value = "获取当前用户的收藏列表")
+    public Result<List<String>> getLikeList() {
+        try {
+            List<String> list = userService.getLikeList();
+            return Result.success(list);
         } catch (BizException e) {
             return Result.failed(e.getMsg());
         }

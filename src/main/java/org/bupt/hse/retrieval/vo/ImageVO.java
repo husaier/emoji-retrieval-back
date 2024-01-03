@@ -39,6 +39,9 @@ public class ImageVO {
     @ApiModelProperty("图片描述")
     private String description;
 
+    @ApiModelProperty("是否收藏")
+    private boolean like;
+
     public long getId() {
         return id;
     }
@@ -109,5 +112,13 @@ public class ImageVO {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public boolean isLike() {
+        return like;
+    }
+
+    public void setLike(boolean like) {
+        this.like = like;
     }
 }

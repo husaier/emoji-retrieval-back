@@ -111,6 +111,24 @@ public class ImageController {
     public Result<String> likeImage(@PathVariable(name = "imgId")
                                     @ApiParam(value = "image id", required = true)
                                     Long imgId) {
-        return Result.failed();
+        try {
+            imageService.likeImage(imgId);
+            return Result.success("收藏成功！");
+        } catch (BizException e){
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @PutMapping("unlike/{imgId}")
+    @ApiOperation(value = "取消收藏图片")
+    public Result<String> unlikeImage(@PathVariable(name = "imgId")
+                                    @ApiParam(value = "image id", required = true)
+                                    Long imgId) {
+        try {
+            imageService.unlikeImage(imgId);
+            return Result.success("取消收藏成功！");
+        } catch (BizException e){
+            return Result.failed(e.getMsg());
+        }
     }
 }
