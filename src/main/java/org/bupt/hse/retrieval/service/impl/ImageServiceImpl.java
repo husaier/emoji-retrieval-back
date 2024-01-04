@@ -7,6 +7,7 @@ import org.bupt.hse.retrieval.entity.UserDO;
 import org.bupt.hse.retrieval.enums.BizExceptionEnum;
 import org.bupt.hse.retrieval.enums.ImageTypeEnum;
 import org.bupt.hse.retrieval.infra.ImageInfraService;
+import org.bupt.hse.retrieval.params.ImageEditParam;
 import org.bupt.hse.retrieval.service.ImageService;
 import org.bupt.hse.retrieval.service.UserService;
 import org.bupt.hse.retrieval.utils.MyFileUtils;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * <p>
@@ -75,7 +77,7 @@ public class ImageServiceImpl implements ImageService {
         imageDO.setOriginName(originalName);
         imageDO.setImgType(imageType.getCode());
         imageDO.setUploadTime(LocalDateTime.now());
-        imageDO.setUserId(userDO.getId());
+        imageDO.setPublisher(userDO.getId());
         imageInfraService.save(imageDO);
         String imgName = String.format("%d%s", imageDO.getId(), suffixName);
         try {
@@ -138,5 +140,22 @@ public class ImageServiceImpl implements ImageService {
         UserDO userDO = userService.getCurUserInfo();
         Long id = userDO.getId();
         redisUtil.remove(String.valueOf(id), String.valueOf(imgId));
+    }
+
+    @Override
+    public void editDescription(ImageEditParam param) throws BizException {
+        Long imgId = param.getImgId();
+        ImageDO imageDO = imageInfraService.getById(imgId);
+        if (imageDO == null) {
+            throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
+        }
+        UserDO userDO = userService.getCurUserInfo();
+        Long id = userDO.getId();
+        if (!Objects.equals(id, imageDO.getPublisher())) {
+            throw new BizException(BizExceptionEnum.NO_AUTHORIZATION);
+        }
+        imageDO.setDescription(param.getDescription());
+        imageDO.setEditTime(LocalDateTime.now());
+        imageInfraService.updateById(imageDO);
     }
 }

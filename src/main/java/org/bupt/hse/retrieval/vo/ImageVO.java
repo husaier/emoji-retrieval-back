@@ -28,7 +28,7 @@ public class ImageVO {
     private String imgType;
 
     @ApiModelProperty("上传用户id")
-    private String userId;
+    private String publisher;
 
     @ApiModelProperty("上传用户昵称")
     private String userName;
@@ -82,12 +82,12 @@ public class ImageVO {
         this.imgType = imgType;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getPublisher() {
+        return publisher;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 
     public String getAddress() {

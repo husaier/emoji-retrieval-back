@@ -31,11 +31,17 @@ public class ImageDO implements Serializable {
     @ApiModelProperty("上传时间")
     private LocalDateTime uploadTime;
 
+    @ApiModelProperty("编辑时间")
+    private LocalDateTime editTime;
+
     @ApiModelProperty("图片类型")
     private String imgType;
 
-    @ApiModelProperty("userId")
-    private Long userId;
+    @ApiModelProperty("发布者id")
+    private Long publisher;
+
+    @ApiModelProperty("图片描述")
+    private String description;
 
     @ApiModelProperty("逻辑删除，1表示已删除，0表示未删除")
     @TableLogic(value = "0", delval = "1")
@@ -73,6 +79,14 @@ public class ImageDO implements Serializable {
         this.uploadTime = uploadTime;
     }
 
+    public LocalDateTime getEditTime() {
+        return editTime;
+    }
+
+    public void setEditTime(LocalDateTime editTime) {
+        this.editTime = editTime;
+    }
+
     public String getImgType() {
         return imgType;
     }
@@ -81,12 +95,20 @@ public class ImageDO implements Serializable {
         this.imgType = imgType;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getPublisher() {
+        return publisher;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setPublisher(Long publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Byte getDeleted() {

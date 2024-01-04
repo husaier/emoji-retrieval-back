@@ -66,16 +66,16 @@ public class SearchServiceImpl implements SearchService {
                    vo.setFileName(x.getFileName());
                    vo.setOriginName(x.getOriginName());
                    vo.setImgType(x.getImgType());
-                   vo.setUserId(String.valueOf(x.getUserId()));
+                   vo.setPublisher(String.valueOf(x.getPublisher()));
                    vo.setLike(likeSet.contains(x.getId()));
-                   UserDO userDO = userMap.get(x.getUserId());
+                   UserDO userDO = userMap.get(x.getPublisher());
                    if (userDO != null) {
                        vo.setUserName(userDO.getName());
                    }
                    vo.setUploadTime(x.getUploadTime());
                    String address = String.format("%s/%s", downloadAddress, x.getId());
                    vo.setAddress(address);
-                   vo.setDescription("图片描述");
+                   vo.setDescription(x.getDescription());
                    return vo;
                 }).collect(Collectors.toList());
         pageVO.setRecords(imgList);
@@ -109,16 +109,16 @@ public class SearchServiceImpl implements SearchService {
                     vo.setFileName(x.getFileName());
                     vo.setOriginName(x.getOriginName());
                     vo.setImgType(x.getImgType());
-                    vo.setUserId(String.valueOf(x.getUserId()));
+                    vo.setPublisher(String.valueOf(x.getPublisher()));
                     vo.setLike(likeSet.contains(x.getId()));
-                    UserDO userDO = userMap.get(x.getUserId());
+                    UserDO userDO = userMap.get(x.getPublisher());
                     if (userDO != null) {
                         vo.setUserName(userDO.getName());
                     }
                     vo.setUploadTime(x.getUploadTime());
                     String address = String.format("%s/%s", downloadAddress, x.getId());
                     vo.setAddress(address);
-                    vo.setDescription("图片描述");
+                    vo.setDescription(x.getDescription());
                     return vo;
                 }).collect(Collectors.toList());
         pageVO.setRecords(imgList);

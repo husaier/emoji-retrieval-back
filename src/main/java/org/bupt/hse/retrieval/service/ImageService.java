@@ -1,6 +1,7 @@
 package org.bupt.hse.retrieval.service;
 
 import org.bupt.hse.retrieval.common.BizException;
+import org.bupt.hse.retrieval.params.ImageEditParam;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,4 +58,11 @@ public interface ImageService {
      * @throws BizException
      */
     void unlikeImage(Long imgId) throws BizException;
+
+    /**
+     * 编辑图片描述
+     * @param param
+     * @throws BizException
+     */
+    void editDescription(ImageEditParam param) throws BizException;
 }

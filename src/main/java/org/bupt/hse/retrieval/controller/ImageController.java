@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
+import org.bupt.hse.retrieval.params.ImageEditParam;
 import org.bupt.hse.retrieval.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +128,17 @@ public class ImageController {
         try {
             imageService.unlikeImage(imgId);
             return Result.success("取消收藏成功！");
+        } catch (BizException e){
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @PostMapping("edit/describe")
+    @ApiOperation("编辑图片描述")
+    public Result<String> editDescription(@RequestBody ImageEditParam param) {
+        try {
+            imageService.editDescription(param);
+            return Result.success("编辑图片描述成功！");
         } catch (BizException e){
             return Result.failed(e.getMsg());
         }
