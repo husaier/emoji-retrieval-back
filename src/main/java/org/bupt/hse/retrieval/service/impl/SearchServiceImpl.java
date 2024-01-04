@@ -124,4 +124,48 @@ public class SearchServiceImpl implements SearchService {
         pageVO.setRecords(imgList);
         return pageVO;
     }
+
+    @Override
+    public PageVO<ImageVO> getUploadPage(long cur, long pageSize) throws BizException {
+        UserDO curUser = userService.getCurUserInfo();
+        Long userId = curUser.getId();
+        String userName = curUser.getName();
+        Set<Long> likeSet = userService.getLikeSet(userId);
+        List<UserDO> userList = userService.getUserInfo();
+        Map<Long, UserDO> userMap = userList.stream()
+                .collect(Collectors
+                        .toMap(UserDO::getId,
+                                Function.identity(),
+                                (x, y) -> x));
+        Page<ImageDO> tmpPage = new Page<>(cur, pageSize);
+        LambdaQueryWrapper<ImageDO> pageQuery = new LambdaQueryWrapper<ImageDO>()
+                .eq(ImageDO::getPublisher, userId);
+        Page<ImageDO> page = imageInfraService.page(tmpPage, pageQuery);
+        PageVO<ImageVO> pageVO = new PageVO<>();
+        pageVO.setCur(page.getCurrent());
+        pageVO.setPageSize(page.getSize());
+        pageVO.setPageNum(page.getPages());
+        pageVO.setTotal(page.getTotal());
+        List<ImageVO> imgList = page.getRecords().stream()
+                .map((x) -> {
+                    ImageVO vo = new ImageVO();
+                    vo.setId(String.valueOf(x.getId()));
+                    vo.setFileName(x.getFileName());
+                    vo.setOriginName(x.getOriginName());
+                    vo.setImgType(x.getImgType());
+                    vo.setPublisher(String.valueOf(x.getPublisher()));
+                    vo.setLike(likeSet.contains(x.getId()));
+                    UserDO userDO = userMap.get(x.getPublisher());
+                    if (userDO != null) {
+                        vo.setUserName(userDO.getName());
+                    }
+                    vo.setUploadTime(x.getUploadTime());
+                    String address = String.format("%s/%s", downloadAddress, x.getId());
+                    vo.setAddress(address);
+                    vo.setDescription(x.getDescription());
+                    return vo;
+                }).collect(Collectors.toList());
+        pageVO.setRecords(imgList);
+        return pageVO;
+    }
 }

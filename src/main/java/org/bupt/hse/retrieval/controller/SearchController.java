@@ -33,11 +33,11 @@ public class SearchController {
     @GetMapping("query")
     @ApiOperation(value = "查询")
     public Result<PageVO<ImageVO>> query(@RequestParam("pageSize")
-                                @ApiParam("page size")
-                                    long pageSize,
+                                         @ApiParam("page size")
+                                         long pageSize,
                                          @RequestParam("cur")
-                                @ApiParam("当前页数")
-                                    long cur) {
+                                         @ApiParam("当前页数")
+                                         long cur) {
         try {
             return Result.success(searchService.searchImages(cur, pageSize));
         } catch (BizException e) {
@@ -55,6 +55,21 @@ public class SearchController {
                                                long cur) {
         try {
             return Result.success(searchService.getLikePage(cur, pageSize));
+        } catch (BizException e) {
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @GetMapping("upload/page")
+    @ApiOperation("分页获取当前用户上传的图片")
+    public Result<PageVO<ImageVO>> getUploadPage(@RequestParam("pageSize")
+                                                 @ApiParam("page size")
+                                                 long pageSize,
+                                                 @RequestParam("cur")
+                                                 @ApiParam("当前页数")
+                                                 long cur) {
+        try {
+            return Result.success(searchService.getUploadPage(cur, pageSize));
         } catch (BizException e) {
             return Result.failed(e.getMsg());
         }
