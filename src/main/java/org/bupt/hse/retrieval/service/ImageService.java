@@ -65,4 +65,12 @@ public interface ImageService {
      * @throws BizException
      */
     void editDescription(ImageEditParam param) throws BizException;
+
+    /**
+     * 查询一张图片的被收藏数量
+     * @param imgId
+     * @return
+     * @throws BizException
+     */
+    long countImgStars(Long imgId);
 }

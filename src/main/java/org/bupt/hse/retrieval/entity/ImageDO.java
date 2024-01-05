@@ -43,6 +43,9 @@ public class ImageDO implements Serializable {
     @ApiModelProperty("图片描述")
     private String description;
 
+    @ApiModelProperty("被收藏数")
+    private Long starCount;
+
     @ApiModelProperty("逻辑删除，1表示已删除，0表示未删除")
     @TableLogic(value = "0", delval = "1")
     private Byte deleted;
@@ -109,6 +112,14 @@ public class ImageDO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getStarCount() {
+        return starCount;
+    }
+
+    public void setStarCount(Long starCount) {
+        this.starCount = starCount;
     }
 
     public Byte getDeleted() {

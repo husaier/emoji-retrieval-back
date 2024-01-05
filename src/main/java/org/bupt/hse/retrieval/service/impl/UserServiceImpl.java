@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDO> getUserInfo() {
+    public List<UserDO> getAllUserInfo() {
         return userInfraService.list();
     }
 
@@ -100,7 +100,8 @@ public class UserServiceImpl implements UserService {
     public List<String> getLikeList() throws BizException {
         UserDO userDO = getCurUserInfo();
         Long userId = userDO.getId();
-        Set<Object> objs = redisUtil.members(String.valueOf(userId));
+        String userKey = String.format("user_%d", userId);
+        Set<Object> objs = redisUtil.members(userKey);
         return objs.stream()
                 .map(x -> {
                     String s = (String) x;
@@ -110,7 +111,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<Long> getLikeSet(Long userId) {
-        Set<Object> objs = redisUtil.members(String.valueOf(userId));
+        String userKey = String.format("user_%d", userId);
+        Set<Object> objs = redisUtil.members(userKey);
         return objs.stream()
                 .map(x -> {
             String s = (String) x;

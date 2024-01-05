@@ -40,7 +40,7 @@ public interface UserService {
      * 获取系统中所有用户信息
      * @return
      */
-    List<UserDO> getUserInfo();
+    List<UserDO> getAllUserInfo();
 
     /**
      * 获得当前用户收藏列表，imgId

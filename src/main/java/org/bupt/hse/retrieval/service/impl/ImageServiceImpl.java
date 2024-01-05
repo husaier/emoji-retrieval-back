@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -100,6 +101,11 @@ public class ImageServiceImpl implements ImageService {
         if (imageDO == null) {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
+        List<UserDO> userInfo = userService.getAllUserInfo();
+        userInfo.forEach(x -> {
+            String userKey = String.format("user_%d", x.getId());
+            redisUtil.remove(userKey, String.valueOf(imgId));
+        });
         imageInfraService.removeById(imgId);
     }
 
@@ -116,6 +122,11 @@ public class ImageServiceImpl implements ImageService {
         if (!res) {
             throw new BizException(BizExceptionEnum.FILE_DELETE_FAIL);
         }
+        List<UserDO> userInfo = userService.getAllUserInfo();
+        userInfo.forEach(x -> {
+            String userKey = String.format("user_%d", x.getId());
+            redisUtil.remove(userKey, String.valueOf(imgId));
+        });
         imageInfraService.hardDeleteImage(imgId);
     }
 
@@ -127,8 +138,11 @@ public class ImageServiceImpl implements ImageService {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
         UserDO userDO = userService.getCurUserInfo();
-        Long id = userDO.getId();
-        redisUtil.sSet(String.valueOf(id), String.valueOf(imgId));
+        Long userId = userDO.getId();
+        String userKey = String.format("user_%d", userId);
+        redisUtil.sSet(userKey, String.valueOf(imgId));
+        imageDO.setStarCount(imageDO.getStarCount() + 1);
+        imageInfraService.updateById(imageDO);
     }
 
     @Override
@@ -138,8 +152,11 @@ public class ImageServiceImpl implements ImageService {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
         UserDO userDO = userService.getCurUserInfo();
-        Long id = userDO.getId();
-        redisUtil.remove(String.valueOf(id), String.valueOf(imgId));
+        Long userId = userDO.getId();
+        String userKey = String.format("user_%d", userId);
+        redisUtil.remove(userKey, String.valueOf(imgId));
+        imageDO.setStarCount(imageDO.getStarCount() - 1);
+        imageInfraService.updateById(imageDO);
     }
 
     @Override
@@ -157,5 +174,15 @@ public class ImageServiceImpl implements ImageService {
         imageDO.setDescription(param.getDescription());
         imageDO.setEditTime(LocalDateTime.now());
         imageInfraService.updateById(imageDO);
+    }
+
+    @Override
+    public long countImgStars(Long imgId) {
+        ImageDO imageDO = imageInfraService.getById(imgId);
+        if (imageDO == null) {
+            return 0;
+        } else {
+            return imageDO.getStarCount();
+        }
     }
 }

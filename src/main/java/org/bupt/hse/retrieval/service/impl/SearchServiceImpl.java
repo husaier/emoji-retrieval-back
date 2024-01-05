@@ -45,8 +45,8 @@ public class SearchServiceImpl implements SearchService {
             throws BizException {
         UserDO curUser = userService.getCurUserInfo();
         Long userId = curUser.getId();
-        List<UserDO> userList = userService.getUserInfo();
-        Set<Long> likeSet = userService.getLikeSet(userId);
+        List<UserDO> userList = userService.getAllUserInfo();
+        Set<Long> starSet = userService.getLikeSet(userId);
         Map<Long, UserDO> userMap = userList.stream()
                 .collect(Collectors
                         .toMap(UserDO::getId,
@@ -67,7 +67,7 @@ public class SearchServiceImpl implements SearchService {
                    vo.setOriginName(x.getOriginName());
                    vo.setImgType(x.getImgType());
                    vo.setPublisher(String.valueOf(x.getPublisher()));
-                   vo.setLike(likeSet.contains(x.getId()));
+                   vo.setStar(starSet.contains(x.getId()));
                    UserDO userDO = userMap.get(x.getPublisher());
                    if (userDO != null) {
                        vo.setUserName(userDO.getName());
@@ -76,6 +76,7 @@ public class SearchServiceImpl implements SearchService {
                    String address = String.format("%s/%s", downloadAddress, x.getId());
                    vo.setAddress(address);
                    vo.setDescription(x.getDescription());
+                   vo.setStarCount(String.valueOf(x.getStarCount()));
                    return vo;
                 }).collect(Collectors.toList());
         pageVO.setRecords(imgList);
@@ -86,8 +87,8 @@ public class SearchServiceImpl implements SearchService {
     public PageVO<ImageVO> getLikePage(long cur, long pageSize) throws BizException {
         UserDO curUser = userService.getCurUserInfo();
         Long userId = curUser.getId();
-        List<UserDO> userList = userService.getUserInfo();
-        Set<Long> likeSet = userService.getLikeSet(userId);
+        List<UserDO> userList = userService.getAllUserInfo();
+        Set<Long> starSet = userService.getLikeSet(userId);
         Map<Long, UserDO> userMap = userList.stream()
                 .collect(Collectors
                         .toMap(UserDO::getId,
@@ -95,7 +96,7 @@ public class SearchServiceImpl implements SearchService {
                                 (x, y) -> x));
         Page<ImageDO> tmpPage = new Page<>(cur, pageSize);
         LambdaQueryWrapper<ImageDO> pageQuery = new LambdaQueryWrapper<ImageDO>()
-                .in(ImageDO::getId, likeSet);
+                .in(ImageDO::getId, starSet);
         Page<ImageDO> page = imageInfraService.page(tmpPage, pageQuery);
         PageVO<ImageVO> pageVO = new PageVO<>();
         pageVO.setCur(page.getCurrent());
@@ -110,7 +111,7 @@ public class SearchServiceImpl implements SearchService {
                     vo.setOriginName(x.getOriginName());
                     vo.setImgType(x.getImgType());
                     vo.setPublisher(String.valueOf(x.getPublisher()));
-                    vo.setLike(likeSet.contains(x.getId()));
+                    vo.setStar(starSet.contains(x.getId()));
                     UserDO userDO = userMap.get(x.getPublisher());
                     if (userDO != null) {
                         vo.setUserName(userDO.getName());
@@ -119,6 +120,7 @@ public class SearchServiceImpl implements SearchService {
                     String address = String.format("%s/%s", downloadAddress, x.getId());
                     vo.setAddress(address);
                     vo.setDescription(x.getDescription());
+                    vo.setStarCount(String.valueOf(x.getStarCount()));
                     return vo;
                 }).collect(Collectors.toList());
         pageVO.setRecords(imgList);
@@ -130,8 +132,8 @@ public class SearchServiceImpl implements SearchService {
         UserDO curUser = userService.getCurUserInfo();
         Long userId = curUser.getId();
         String userName = curUser.getName();
-        Set<Long> likeSet = userService.getLikeSet(userId);
-        List<UserDO> userList = userService.getUserInfo();
+        Set<Long> starSet = userService.getLikeSet(userId);
+        List<UserDO> userList = userService.getAllUserInfo();
         Map<Long, UserDO> userMap = userList.stream()
                 .collect(Collectors
                         .toMap(UserDO::getId,
@@ -154,7 +156,7 @@ public class SearchServiceImpl implements SearchService {
                     vo.setOriginName(x.getOriginName());
                     vo.setImgType(x.getImgType());
                     vo.setPublisher(String.valueOf(x.getPublisher()));
-                    vo.setLike(likeSet.contains(x.getId()));
+                    vo.setStar(starSet.contains(x.getId()));
                     UserDO userDO = userMap.get(x.getPublisher());
                     if (userDO != null) {
                         vo.setUserName(userDO.getName());
@@ -163,6 +165,7 @@ public class SearchServiceImpl implements SearchService {
                     String address = String.format("%s/%s", downloadAddress, x.getId());
                     vo.setAddress(address);
                     vo.setDescription(x.getDescription());
+                    vo.setStarCount(String.valueOf(x.getStarCount()));
                     return vo;
                 }).collect(Collectors.toList());
         pageVO.setRecords(imgList);

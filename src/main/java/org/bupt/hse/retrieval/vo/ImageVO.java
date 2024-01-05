@@ -40,7 +40,10 @@ public class ImageVO {
     private String description;
 
     @ApiModelProperty("是否收藏")
-    private boolean like;
+    private boolean star;
+
+    @ApiModelProperty("被收藏数量")
+    private String starCount;
 
     public String getId() {
         return id;
@@ -114,11 +117,19 @@ public class ImageVO {
         this.userName = userName;
     }
 
-    public boolean isLike() {
-        return like;
+    public boolean isStar() {
+        return star;
     }
 
-    public void setLike(boolean like) {
-        this.like = like;
+    public void setStar(boolean star) {
+        this.star = star;
+    }
+
+    public String getStarCount() {
+        return starCount;
+    }
+
+    public void setStarCount(String starCount) {
+        this.starCount = starCount;
     }
 }
