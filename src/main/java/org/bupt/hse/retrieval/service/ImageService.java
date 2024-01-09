@@ -2,6 +2,7 @@ package org.bupt.hse.retrieval.service;
 
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.params.ImageEditParam;
+import org.bupt.hse.retrieval.params.ImageUploadParam;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +30,7 @@ public interface ImageService {
      * @return
      * @throws BizException
      */
-    Long uploadImage(MultipartFile file) throws BizException;
+    Long uploadImage(MultipartFile file, ImageUploadParam param) throws BizException;
 
     /**
      * 逻辑删除图片
@@ -73,4 +74,9 @@ public interface ImageService {
      * @throws BizException
      */
     long countImgStars(Long imgId);
+
+    /**
+     * 生成数据库中所有的图片的嵌入
+     */
+    void createEmbedding() throws BizException;
 }

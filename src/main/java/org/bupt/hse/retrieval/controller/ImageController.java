@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.common.Result;
 import org.bupt.hse.retrieval.params.ImageEditParam;
+import org.bupt.hse.retrieval.params.ImageUploadParam;
 import org.bupt.hse.retrieval.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,9 +86,12 @@ public class ImageController {
     @ApiOperation(value = "上传图片")
     public Result<String> uploadImage(@ApiParam(value = "上传的jpg文件", required = true)
                                       @RequestPart("file")
-                                      MultipartFile file) {
+                                      MultipartFile file,
+                                      @ApiParam(value = "上传参数", required = true)
+                                      @RequestPart("param")
+                                      ImageUploadParam param) {
         try {
-            Long imgId = imageService.uploadImage(file);
+            Long imgId = imageService.uploadImage(file, param);
             return Result.success(String.valueOf(imgId));
         } catch (BizException e) {
             return Result.failed(e.getMsg());
@@ -139,6 +143,17 @@ public class ImageController {
         try {
             imageService.editDescription(param);
             return Result.success("编辑图片描述成功！");
+        } catch (BizException e){
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @GetMapping(value = "create/embedding")
+    @ApiOperation(value = "下载图片")
+    public Result<String> createEmbedding() {
+        try {
+            imageService.createEmbedding();
+            return Result.success("图片嵌入成功！");
         } catch (BizException e){
             return Result.failed(e.getMsg());
         }

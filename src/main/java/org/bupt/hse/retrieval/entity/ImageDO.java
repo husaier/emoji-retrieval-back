@@ -46,6 +46,9 @@ public class ImageDO implements Serializable {
     @ApiModelProperty("被收藏数")
     private Long starCount;
 
+    @ApiModelProperty("是否生成嵌入")
+    private Boolean hasEmbedding;
+
     @ApiModelProperty("逻辑删除，1表示已删除，0表示未删除")
     @TableLogic(value = "0", delval = "1")
     private Byte deleted;
@@ -120,6 +123,14 @@ public class ImageDO implements Serializable {
 
     public void setStarCount(Long starCount) {
         this.starCount = starCount;
+    }
+
+    public Boolean getHasEmbedding() {
+        return hasEmbedding;
+    }
+
+    public void setHasEmbedding(Boolean hasEmbedding) {
+        this.hasEmbedding = hasEmbedding;
     }
 
     public Byte getDeleted() {

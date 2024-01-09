@@ -1,5 +1,8 @@
 package org.bupt.hse.retrieval.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.io.FileUtils;
 import org.bupt.hse.retrieval.common.BizException;
 import org.bupt.hse.retrieval.entity.ImageDO;
@@ -8,10 +11,12 @@ import org.bupt.hse.retrieval.enums.BizExceptionEnum;
 import org.bupt.hse.retrieval.enums.ImageTypeEnum;
 import org.bupt.hse.retrieval.infra.ImageInfraService;
 import org.bupt.hse.retrieval.params.ImageEditParam;
+import org.bupt.hse.retrieval.params.ImageUploadParam;
 import org.bupt.hse.retrieval.service.ImageService;
 import org.bupt.hse.retrieval.service.UserService;
 import org.bupt.hse.retrieval.utils.MyFileUtils;
 import org.bupt.hse.retrieval.utils.RedisUtil;
+import org.bupt.hse.retrieval.utils.RestTemplateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -50,6 +57,9 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageInfraService imageInfraService;
 
+    @Autowired
+    private RestTemplateUtil restTemplateUtil;
+
     @Override
     public FileSystemResource downloadImage(Long imgId) throws BizException {
         ImageDO imageDO = imageInfraService.getById(imgId);
@@ -62,7 +72,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Long uploadImage(MultipartFile file) throws BizException {
+    public Long uploadImage(MultipartFile file, ImageUploadParam param) throws BizException {
         UserDO userDO = userService.getCurUserInfo();
         if (file.isEmpty()) {
             throw new BizException(BizExceptionEnum.EMPTY_FILE);
@@ -78,7 +88,9 @@ public class ImageServiceImpl implements ImageService {
         imageDO.setOriginName(originalName);
         imageDO.setImgType(imageType.getCode());
         imageDO.setUploadTime(LocalDateTime.now());
+        imageDO.setEditTime(LocalDateTime.now());
         imageDO.setPublisher(userDO.getId());
+        imageDO.setDescription(param.getDescription());
         imageInfraService.save(imageDO);
         String imgName = String.format("%d%s", imageDO.getId(), suffixName);
         try {
@@ -87,6 +99,13 @@ public class ImageServiceImpl implements ImageService {
             FileUtils.touch(newFile);
             file.transferTo(newFile);
             imageDO.setFileName(imgName);
+            Map<String, String> processParam = new HashMap<>();
+            processParam.put("id", String.valueOf(imageDO.getId()));
+            processParam.put("file_name", imgName);
+            String paramStr = JSON.toJSONString(processParam);
+            Map<String, String> headers = new HashMap<>();
+            restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+            imageDO.setHasEmbedding(true);
             imageInfraService.saveOrUpdate(imageDO);
         } catch (Exception e) {
             throw new BizException(BizExceptionEnum.FILE_UPLOAD_FAIL);
@@ -183,6 +202,29 @@ public class ImageServiceImpl implements ImageService {
             return 0;
         } else {
             return imageDO.getStarCount();
+        }
+    }
+
+    @Override
+    public void createEmbedding() throws BizException {
+        LambdaQueryWrapper<ImageDO> queryWrapper = new LambdaQueryWrapper<ImageDO>()
+                .eq(ImageDO::getHasEmbedding, true);
+        long total = imageInfraService.count(queryWrapper);
+        long pages = total / 10;
+        if (total % 10 != 0) {
+            pages++;
+        }
+        for (int i = 1; i <= pages; i++) {
+            Page<ImageDO> page = new Page<>(i, 10);
+            Page<ImageDO> res = imageInfraService.page(page, queryWrapper);
+            for (ImageDO itm : res.getRecords()) {
+                Map<String, String> processParam = new HashMap<>();
+                processParam.put("id", String.valueOf(itm.getId()));
+                processParam.put("file_name", itm.getFileName());
+                String paramStr = JSON.toJSONString(processParam);
+                Map<String, String> headers = new HashMap<>();
+                restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+            }
         }
     }
 }
