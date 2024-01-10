@@ -149,7 +149,7 @@ public class ImageController {
     }
 
     @GetMapping(value = "create/embedding")
-    @ApiOperation(value = "下载图片")
+    @ApiOperation(value = "创建图片嵌入")
     public Result<String> createEmbedding() {
         try {
             imageService.createEmbedding();

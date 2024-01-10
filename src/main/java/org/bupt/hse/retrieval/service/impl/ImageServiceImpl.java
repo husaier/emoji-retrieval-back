@@ -1,6 +1,7 @@
 package org.bupt.hse.retrieval.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.io.FileUtils;
@@ -99,17 +100,22 @@ public class ImageServiceImpl implements ImageService {
             FileUtils.touch(newFile);
             file.transferTo(newFile);
             imageDO.setFileName(imgName);
-            Map<String, String> processParam = new HashMap<>();
-            processParam.put("id", String.valueOf(imageDO.getId()));
-            processParam.put("file_name", imgName);
-            String paramStr = JSON.toJSONString(processParam);
-            Map<String, String> headers = new HashMap<>();
-            restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
-            imageDO.setHasEmbedding(true);
             imageInfraService.saveOrUpdate(imageDO);
         } catch (Exception e) {
             throw new BizException(BizExceptionEnum.FILE_UPLOAD_FAIL);
         }
+        Map<String, String> processParam = new HashMap<>();
+        processParam.put("id", String.valueOf(imageDO.getId()));
+        processParam.put("file_name", imgName);
+        String paramStr = JSON.toJSONString(processParam);
+        Map<String, String> headers = new HashMap<>();
+        JSONObject res = restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+        if (res.getInteger("code") != 200) {
+            log.error(String.format("图像嵌入生成失败，接口返回res=%s", JSON.toJSONString(res)));
+            throw new BizException(BizExceptionEnum.FAIL_CREATE_IMAGE_EMBEDDING);
+        }
+        imageDO.setHasEmbedding(true);
+        imageInfraService.saveOrUpdate(imageDO);
         return imageDO.getId();
     }
 
@@ -208,12 +214,13 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void createEmbedding() throws BizException {
         LambdaQueryWrapper<ImageDO> queryWrapper = new LambdaQueryWrapper<ImageDO>()
-                .eq(ImageDO::getHasEmbedding, true);
+                .eq(ImageDO::getHasEmbedding, false);
         long total = imageInfraService.count(queryWrapper);
         long pages = total / 10;
         if (total % 10 != 0) {
             pages++;
         }
+        long count = 0;
         for (int i = 1; i <= pages; i++) {
             Page<ImageDO> page = new Page<>(i, 10);
             Page<ImageDO> res = imageInfraService.page(page, queryWrapper);
@@ -223,7 +230,15 @@ public class ImageServiceImpl implements ImageService {
                 processParam.put("file_name", itm.getFileName());
                 String paramStr = JSON.toJSONString(processParam);
                 Map<String, String> headers = new HashMap<>();
-                restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+                JSONObject response = restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+                if (response.getInteger("code") != 200) {
+                    log.error(String.format("图像嵌入生成失败，接口返回res=%s", JSON.toJSONString(res)));
+                    throw new BizException(BizExceptionEnum.FAIL_CREATE_IMAGE_EMBEDDING);
+                }
+                itm.setHasEmbedding(true);
+                imageInfraService.updateById(itm);
+                count++;
+                log.info(String.format("已生成/总量：%d/%d，id = %d", count, total, itm.getId()));
             }
         }
     }

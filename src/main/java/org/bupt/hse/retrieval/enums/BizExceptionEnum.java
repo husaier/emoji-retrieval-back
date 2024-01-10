@@ -16,7 +16,9 @@ public enum BizExceptionEnum {
     NO_AUTHORIZATION("no_authorization", "您没有该权限"),
     INVALID_IMG_ID("invalid_img_id", "无效的图片ID"),
     INVALID_USER_TOKEN("invalid_user_token", "用户未登录，请登录"),
-    WRONG_PASS_WORD("wrong_pass_word", "密码错误，请重试");
+    WRONG_PASS_WORD("wrong_pass_word", "密码错误，请重试"),
+    FAIL_CREATE_IMAGE_EMBEDDING("fail_create_image_embedding", "图像嵌入创建失败")
+    ;
 
     private final String code;
     private final String msg;
