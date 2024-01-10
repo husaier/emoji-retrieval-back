@@ -6,6 +6,8 @@ import org.bupt.hse.retrieval.params.ImageUploadParam;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -31,6 +33,13 @@ public interface ImageService {
      * @throws BizException
      */
     Long uploadImage(MultipartFile file, ImageUploadParam param) throws BizException;
+
+    /**
+     * 批量上传图片
+     * @param files
+     * @return
+     */
+    List<Long> batchUploadImage(MultipartFile[] files);
 
     /**
      * 逻辑删除图片

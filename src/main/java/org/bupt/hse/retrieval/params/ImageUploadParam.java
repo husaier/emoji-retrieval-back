@@ -11,12 +11,12 @@ import io.swagger.annotations.ApiModelProperty;
 public class ImageUploadParam {
 
     @ApiModelProperty(value = "图片文件id",
-            required = true)
-    private String fileId;
+            required = false)
+    private String fileId = "";
 
     @ApiModelProperty(value = "图片描述",
-            required = true)
-    private String description;
+            required = false)
+    private String description = "";
 
     public String getFileId() {
         return fileId;

@@ -17,7 +17,9 @@ public enum BizExceptionEnum {
     INVALID_IMG_ID("invalid_img_id", "无效的图片ID"),
     INVALID_USER_TOKEN("invalid_user_token", "用户未登录，请登录"),
     WRONG_PASS_WORD("wrong_pass_word", "密码错误，请重试"),
-    FAIL_CREATE_IMAGE_EMBEDDING("fail_create_image_embedding", "图像嵌入创建失败")
+    FAIL_CREATE_IMAGE_EMBEDDING("fail_create_image_embedding", "图像嵌入创建失败"),
+    FAIL_SEARCH_FROM_MODEL("fail_search_from_model", "检索模型错误"),
+    INVALID_CUR_PAGE("invalid_cur_page", "当前页码参数无效")
     ;
 
     private final String code;

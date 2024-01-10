@@ -30,16 +30,35 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @GetMapping("query")
-    @ApiOperation(value = "查询")
-    public Result<PageVO<ImageVO>> query(@RequestParam("pageSize")
+    @GetMapping("page")
+    @ApiOperation(value = "分页查询所有图片")
+    public Result<PageVO<ImageVO>> page(@RequestParam("pageSize")
                                          @ApiParam("page size")
                                          long pageSize,
                                          @RequestParam("cur")
                                          @ApiParam("当前页数")
                                          long cur) {
         try {
-            return Result.success(searchService.searchImages(cur, pageSize));
+            return Result.success(searchService.getAllPage(cur, pageSize));
+        } catch (BizException e) {
+            return Result.failed(e.getMsg());
+        }
+    }
+
+    @GetMapping("search")
+    @ApiOperation(value = "用文本检索图片，分页获取")
+    public Result<PageVO<ImageVO>> page(@RequestParam("query")
+                                        @ApiParam("query text")
+                                        String query,
+                                        @RequestParam("pageSize")
+                                        @ApiParam("page size")
+                                        long pageSize,
+                                        @RequestParam("cur")
+                                        @ApiParam("当前页数")
+                                        long cur) {
+        try {
+            log.info(String.format("收到检索请求，query=%s, pageSize=%d", query, pageSize));
+            return Result.success(searchService.searchImages(query, cur, pageSize));
         } catch (BizException e) {
             return Result.failed(e.getMsg());
         }

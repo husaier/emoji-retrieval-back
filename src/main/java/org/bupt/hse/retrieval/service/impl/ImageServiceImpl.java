@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <p>
@@ -117,6 +114,20 @@ public class ImageServiceImpl implements ImageService {
         imageDO.setHasEmbedding(true);
         imageInfraService.saveOrUpdate(imageDO);
         return imageDO.getId();
+    }
+
+    @Override
+    public List<Long> batchUploadImage(MultipartFile[] files) {
+        List<Long> res = new ArrayList<>();
+        for(MultipartFile file: files) {
+            try {
+                Long id  = uploadImage(file, new ImageUploadParam());
+                res.add(id);
+            } catch (BizException e) {
+                log.error(e.getMsg());
+            }
+        }
+        return res;
     }
 
     @Override
@@ -221,9 +232,10 @@ public class ImageServiceImpl implements ImageService {
             pages++;
         }
         long count = 0;
-        for (int i = 1; i <= pages; i++) {
-            Page<ImageDO> page = new Page<>(i, 10);
+        while (pages > 0) {
+            Page<ImageDO> page = new Page<>(1, 10);
             Page<ImageDO> res = imageInfraService.page(page, queryWrapper);
+            pages = res.getPages();
             for (ImageDO itm : res.getRecords()) {
                 Map<String, String> processParam = new HashMap<>();
                 processParam.put("id", String.valueOf(itm.getId()));

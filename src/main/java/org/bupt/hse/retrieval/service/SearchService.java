@@ -10,14 +10,16 @@ import org.bupt.hse.retrieval.vo.PageVO;
  */
 public interface SearchService {
 
+    PageVO<ImageVO> getAllPage(long cur, long pageSize) throws BizException;
+
     /**
-     * 分页获取检索图片详细信息
+     * 分页查询所有图片的详细信息
      * @param cur
      * @param pageSize
      * @return
      * @throws BizException
      */
-    PageVO<ImageVO> searchImages(long cur, long pageSize) throws BizException;
+    PageVO<ImageVO> searchImages(String query, long cur, long pageSize) throws BizException;
 
     /**
      * 分页获取当前用户收藏图片详细信息

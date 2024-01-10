@@ -8,6 +8,7 @@ import org.bupt.hse.retrieval.common.Result;
 import org.bupt.hse.retrieval.params.ImageEditParam;
 import org.bupt.hse.retrieval.params.ImageUploadParam;
 import org.bupt.hse.retrieval.service.ImageService;
+import org.bupt.hse.retrieval.vo.BatchUploadImageVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Hu Saier <husaier@bupt.edu.cn>
@@ -96,6 +99,24 @@ public class ImageController {
         } catch (BizException e) {
             return Result.failed(e.getMsg());
         }
+    }
+
+    @PostMapping(value ="batchUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "文件上传请求")
+    public Result<BatchUploadImageVO> batchUploadFile(@RequestPart("files") MultipartFile[] files) {
+        List<Long> imgIdList = imageService.batchUploadImage(files);
+        int total = files.length;
+        int success = imgIdList.size();
+        int fail = total - success;
+        List<String> ids = imgIdList.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+        BatchUploadImageVO res = new BatchUploadImageVO();
+        res.setTotal(total);
+        res.setSuccessCount(success);
+        res.setFailCount(fail);
+        res.setIdList(ids);
+        return Result.success(res);
     }
 
     @DeleteMapping("delete/{imgId}")
