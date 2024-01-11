@@ -172,16 +172,19 @@ public class SearchServiceImpl implements SearchService {
 
     private List<String> searchFromModel(String query) {
         Map<String, String> processParam = new HashMap<>();
+        processParam.put("from", "0");
+        processParam.put("pageSize", "200");
         processParam.put("query", query);
         String paramStr = JSON.toJSONString(processParam);
         Map<String, String> headers = new HashMap<>();
         JSONObject response = restTemplateUtil.post("http://127.0.0.1:8002/emoji/search", paramStr, headers);
-        log.info(String.format("model search response: %s", JSON.toJSONString(response)));
+//        log.info(String.format("model search response: %s", JSON.toJSONString(response)));
         if (response.getInteger("code") != 200) {
             log.error(BizExceptionEnum.FAIL_SEARCH_FROM_MODEL.getMsg());
             return new ArrayList<>();
         }
-        JSONArray array = response.getJSONArray("data");
+        JSONObject obj = response.getJSONObject("data");
+        JSONArray array = obj.getJSONArray("records");
         List<String> res = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             res.add(array.getString(i));

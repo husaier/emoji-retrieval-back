@@ -102,8 +102,10 @@ public class ImageController {
     }
 
     @PostMapping(value ="batchUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ApiOperation(value = "文件上传请求")
-    public Result<BatchUploadImageVO> batchUploadFile(@RequestPart("files") MultipartFile[] files) {
+    @ApiOperation(value = "批量上传文件")
+    public Result<BatchUploadImageVO> batchUploadFile(@ApiParam(value = "上传的图片文件", required = true)
+                                                      @RequestPart("files")
+                                                      MultipartFile[] files) {
         List<Long> imgIdList = imageService.batchUploadImage(files);
         int total = files.length;
         int success = imgIdList.size();
