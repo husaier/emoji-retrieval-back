@@ -51,7 +51,9 @@ public class SearchServiceImpl implements SearchService {
     private RedisUtil redisUtil;
 
     @Override
-    public PageVO<ImageVO> getAllPage(long cur, long pageSize) throws BizException {
+    public PageVO<ImageVO> getAllPage(long cur,
+                                      long pageSize)
+            throws BizException {
         UserDO curUser = userService.getCurUserInfo();
         Long userId = curUser.getId();
         List<UserDO> userList = userService.getAllUserInfo();
@@ -82,7 +84,10 @@ public class SearchServiceImpl implements SearchService {
                         vo.setUserName(userDO.getName());
                     }
                     vo.setUploadTime(x.getUploadTime());
-                    String address = String.format("%s/%s", downloadAddress, x.getId());
+                    String address = String.format(
+                            "%s/%s",
+                            downloadAddress,
+                            x.getId());
                     vo.setAddress(address);
                     vo.setDescription(x.getDescription());
                     vo.setStarCount(String.valueOf(x.getStarCount()));
@@ -93,7 +98,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public PageVO<ImageVO> searchImages(String query, long cur, long pageSize)
+    public PageVO<ImageVO> searchImages(String query,
+                                        long cur,
+                                        long pageSize)
             throws BizException {
         // 查缓存
         String redisKey = String.format("search_%s", query);
@@ -107,7 +114,9 @@ public class SearchServiceImpl implements SearchService {
         } else {
             searchResultIds = cacheResultIds;
         }
-        log.info(String.format("searchResultIds size: %d", searchResultIds.size()));
+        log.info(String.format(
+                "searchResultIds size: %d",
+                searchResultIds.size()));
         // 分页计算
         long total = searchResultIds.size();
         long pages = total / pageSize;
@@ -160,7 +169,10 @@ public class SearchServiceImpl implements SearchService {
                        vo.setUserName(userDO.getName());
                    }
                    vo.setUploadTime(x.getUploadTime());
-                   String address = String.format("%s/%s", downloadAddress, x.getId());
+                   String address = String.format(
+                           "%s/%s",
+                           downloadAddress,
+                           x.getId());
                    vo.setAddress(address);
                    vo.setDescription(x.getDescription());
                    vo.setStarCount(String.valueOf(x.getStarCount()));
@@ -177,8 +189,14 @@ public class SearchServiceImpl implements SearchService {
         processParam.put("query", query);
         String paramStr = JSON.toJSONString(processParam);
         Map<String, String> headers = new HashMap<>();
-        JSONObject response = restTemplateUtil.post("http://127.0.0.1:8002/emoji/search", paramStr, headers);
-//        log.info(String.format("model search response: %s", JSON.toJSONString(response)));
+        JSONObject response = restTemplateUtil.post(
+                "http://127.0.0.1:8002/emoji/search",
+                paramStr,
+                headers);
+        log.info(String.format(
+                "model search response: %s",
+                JSON.toJSONString(response))
+        );
         if (response.getInteger("code") != 200) {
             log.error(BizExceptionEnum.FAIL_SEARCH_FROM_MODEL.getMsg());
             return new ArrayList<>();
@@ -226,7 +244,11 @@ public class SearchServiceImpl implements SearchService {
                         vo.setUserName(userDO.getName());
                     }
                     vo.setUploadTime(x.getUploadTime());
-                    String address = String.format("%s/%s", downloadAddress, x.getId());
+                    String address = String.format(
+                            "%s/%s",
+                            downloadAddress,
+                            x.getId()
+                    );
                     vo.setAddress(address);
                     vo.setDescription(x.getDescription());
                     vo.setStarCount(String.valueOf(x.getStarCount()));
@@ -237,7 +259,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public PageVO<ImageVO> getUploadPage(long cur, long pageSize) throws BizException {
+    public PageVO<ImageVO> getUploadPage(long cur,
+                                         long pageSize)
+            throws BizException {
         UserDO curUser = userService.getCurUserInfo();
         Long userId = curUser.getId();
         String userName = curUser.getName();
@@ -271,7 +295,10 @@ public class SearchServiceImpl implements SearchService {
                         vo.setUserName(userDO.getName());
                     }
                     vo.setUploadTime(x.getUploadTime());
-                    String address = String.format("%s/%s", downloadAddress, x.getId());
+                    String address = String.format(
+                            "%s/%s",
+                            downloadAddress,
+                            x.getId());
                     vo.setAddress(address);
                     vo.setDescription(x.getDescription());
                     vo.setStarCount(String.valueOf(x.getStarCount()));

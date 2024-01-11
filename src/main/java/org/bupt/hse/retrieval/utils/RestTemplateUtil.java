@@ -25,39 +25,62 @@ public class RestTemplateUtil {
     @Autowired
     private RestTemplate restTemplate;
 
-    public JSONObject get(String url, Map<String, Object> queryParams) throws IOException {
+    public JSONObject get(String url,
+                          Map<String, Object> queryParams)
+            throws IOException {
         return get(url, queryParams, new HashMap<>(1));
     }
 
-    public JSONObject get(String url, Map<String, Object> queryParams, Map<String, String> headerParams) throws IOException {
+    public JSONObject get(String url,
+                          Map<String, Object> queryParams,
+                          Map<String, String> headerParams)
+            throws IOException {
         String tempUrl = setParamsByAppendUrl(queryParams, url);
         HttpHeaders headers = new HttpHeaders();
         headerParams.forEach(headers::add);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(tempUrl, HttpMethod.GET, httpEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                tempUrl,
+                HttpMethod.GET,
+                httpEntity,
+                String.class);
         return JSONObject.parseObject(response.getBody());
     }
 
-    public JSONObject get2(String url, Map<String, Object> queryParams, Map<String, String> headerParams) throws IOException {
+    public JSONObject get2(String url,
+                           Map<String, Object> queryParams,
+                           Map<String, String> headerParams)
+            throws IOException {
         String tempUrl = setParamsByPath(queryParams, url);
         HttpHeaders headers = new HttpHeaders();
         headerParams.forEach(headers::add);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(tempUrl, HttpMethod.GET, httpEntity, String.class, queryParams);
+        ResponseEntity<String> response = restTemplate.exchange(
+                tempUrl,
+                HttpMethod.GET,
+                httpEntity,
+                String.class,
+                queryParams);
         return JSONObject.parseObject(response.getBody());
     }
 
-    public JSONObject post(String url, String json, Map<String, String> headerParams) {
+    public JSONObject post(String url,
+                           String json,
+                           Map<String, String> headerParams) {
         HttpHeaders headers = new HttpHeaders();
         headerParams.forEach(headers::add);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         HttpEntity<String> httpEntity = new HttpEntity<>(json, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                httpEntity, String.class);
         return JSONObject.parseObject(response.getBody());
     }
 
-    private String setParamsByPath(Map<String, Object> queryParams, String url) {
+    private String setParamsByPath(Map<String, Object> queryParams,
+                                   String url) {
         // url?id={id}&name={name}
         if (queryParams == null || queryParams.isEmpty()) {
             return url;
@@ -65,7 +88,11 @@ public class RestTemplateUtil {
         StringBuilder sb = new StringBuilder();
         try {
             for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
-                sb.append("&").append(entry.getKey()).append("=").append("{").append(entry.getKey()).append("}");
+                sb.append("&")
+                .append(entry.getKey())
+                .append("=").append("{")
+                .append(entry.getKey())
+                .append("}");
             }
             if (!url.contains("?")) {
                 sb.deleteCharAt(0).insert(0, "?");
@@ -84,11 +111,14 @@ public class RestTemplateUtil {
         StringBuilder sb = new StringBuilder();
         try {
             for (Map.Entry<String, Object> entry : queryParams.entrySet()) {
-                sb.append("&").append(entry.getKey()).append("=");
+                sb.append("&")
+                .append(entry.getKey())
+                .append("=");
                 sb.append(entry.getValue());
             }
             if (!url.contains("?")) {
-                sb.deleteCharAt(0).insert(0, "?");
+                sb.deleteCharAt(0)
+                .insert(0, "?");
             }
         } catch (Exception e) {
             log.error(e.toString());

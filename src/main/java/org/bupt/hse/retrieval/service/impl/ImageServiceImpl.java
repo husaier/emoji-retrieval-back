@@ -65,7 +65,10 @@ public class ImageServiceImpl implements ImageService {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
         String fileName = imageDO.getFileName();
-        String path = String.format("%s/emoji/%s", classPath, fileName);
+        String path = String.format(
+                "%s/emoji/%s",
+                classPath,
+                fileName);
         return new FileSystemResource(path);
     }
 
@@ -90,7 +93,10 @@ public class ImageServiceImpl implements ImageService {
         imageDO.setPublisher(userDO.getId());
         imageDO.setDescription(param.getDescription());
         imageInfraService.save(imageDO);
-        String imgName = String.format("%d%s", imageDO.getId(), suffixName);
+        String imgName = String.format(
+                "%d%s",
+                imageDO.getId(),
+                suffixName);
         try {
             String path = String.format("%s/emoji/%s", classPath, imgName);
             File newFile = new File(path);
@@ -106,9 +112,14 @@ public class ImageServiceImpl implements ImageService {
         processParam.put("file_name", imgName);
         String paramStr = JSON.toJSONString(processParam);
         Map<String, String> headers = new HashMap<>();
-        JSONObject res = restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+        JSONObject res = restTemplateUtil.post(
+                "http://127.0.0.1:8002/process/image",
+                paramStr,
+                headers);
         if (res.getInteger("code") != 200) {
-            log.error(String.format("图像嵌入生成失败，接口返回res=%s", JSON.toJSONString(res)));
+            log.error(String.format(
+                    "图像嵌入生成失败，接口返回res=%s",
+                    JSON.toJSONString(res)));
             throw new BizException(BizExceptionEnum.FAIL_CREATE_IMAGE_EMBEDDING);
         }
         imageDO.setHasEmbedding(true);
@@ -153,7 +164,10 @@ public class ImageServiceImpl implements ImageService {
             throw new BizException(BizExceptionEnum.INVALID_IMG_ID);
         }
         String fileName = imageDO.getFileName();
-        String path = String.format("%s/emoji/%s", classPath, fileName);
+        String path = String.format(
+                "%s/emoji/%s",
+                classPath,
+                fileName);
         boolean res = MyFileUtils.deleteFile(path);
         if (!res) {
             throw new BizException(BizExceptionEnum.FILE_DELETE_FAIL);
@@ -242,15 +256,26 @@ public class ImageServiceImpl implements ImageService {
                 processParam.put("file_name", itm.getFileName());
                 String paramStr = JSON.toJSONString(processParam);
                 Map<String, String> headers = new HashMap<>();
-                JSONObject response = restTemplateUtil.post("http://127.0.0.1:8002/process/image", paramStr, headers);
+                JSONObject response = restTemplateUtil.post(
+                        "http://127.0.0.1:8002/process/image",
+                        paramStr,
+                        headers);
                 if (response.getInteger("code") != 200) {
-                    log.error(String.format("图像嵌入生成失败，接口返回res=%s", JSON.toJSONString(res)));
+                    log.error(String.format(
+                            "图像嵌入生成失败，接口返回res=%s",
+                            JSON.toJSONString(res))
+                    );
                     throw new BizException(BizExceptionEnum.FAIL_CREATE_IMAGE_EMBEDDING);
                 }
                 itm.setHasEmbedding(true);
                 imageInfraService.updateById(itm);
                 count++;
-                log.info(String.format("已生成/总量：%d/%d，id = %d", count, total, itm.getId()));
+                log.info(String.format(
+                        "已生成/总量：%d/%d，id = %d",
+                        count,
+                        total,
+                        itm.getId())
+                );
             }
         }
     }

@@ -11,6 +11,7 @@ import java.util.Locale;
  */
 public enum ImageTypeEnum {
     JPG("jpg", ".jpg"),
+
     GIF("gif", ".gif");
 
     @EnumValue

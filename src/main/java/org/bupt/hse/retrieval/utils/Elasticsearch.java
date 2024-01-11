@@ -35,12 +35,17 @@ public class Elasticsearch {
         // Create the low-level client
         final CredentialsProvider credentialsProvider =
                 new BasicCredentialsProvider();
+
         credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials("elastic", "password"));
+                new UsernamePasswordCredentials(
+                        "elastic",
+                        "password")
+        );
 
         RestClientBuilder builder = RestClient.builder(
                         new HttpHost("10.112.67.227", 9200))
-                .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                .setHttpClientConfigCallback(
+                        new RestClientBuilder.HttpClientConfigCallback() {
                     @Override
                     public HttpAsyncClientBuilder customizeHttpClient(
                             HttpAsyncClientBuilder httpClientBuilder) {
@@ -64,7 +69,10 @@ public class Elasticsearch {
         makeConnection();
 
         // Index data to an index products
-        Product product = new Product("abc", "Bag", 42);
+        Product product = new Product(
+                "abc",
+                "Bag",
+                42);
 
         IndexRequest<Object> indexRequest = new IndexRequest.Builder<>()
                 .index("products")
